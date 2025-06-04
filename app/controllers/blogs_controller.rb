@@ -32,7 +32,6 @@ class BlogsController < ApplicationController
 
   def update
     @blog = current_user.blogs.find(params[:id])
-    params[:blog][:random_eyecatch] = false if !current_user.premium? && params[:blog] && params[:blog][:random_eyecatch]
     if @blog.update(blog_params)
       redirect_to blog_url(@blog), notice: 'Blog was successfully updated.'
     else
@@ -59,6 +58,8 @@ class BlogsController < ApplicationController
   end
 
   def blog_params
-    params.require(:blog).permit(:title, :content, :secret, :random_eyecatch)
+    allowed = %i[title content secret]
+    allowed << :random_eyecatch if current_user&.premium?
+    params.require(:blog).permit(*allowed)
   end
 end
