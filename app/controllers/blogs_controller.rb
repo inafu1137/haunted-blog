@@ -9,9 +9,7 @@ class BlogsController < ApplicationController
     @blogs = Blog.search(params[:term]).published.default_order
   end
 
-  def show
-    raise ActiveRecord::RecordNotFound if @blog.secret? && (!user_signed_in? || current_user != @blog.user)
-  end
+  def show; end
 
   def new
     @blog = Blog.new
@@ -52,7 +50,12 @@ class BlogsController < ApplicationController
   private
 
   def set_blog
-    @blog = Blog.find(params[:id])
+    if action_name == 'show'
+      scope = user_signed_in? ? Blog.where('secret = ? OR user_id = ?', false, current_user.id) : Blog.where(secret: false)
+      @blog = scope.find(params[:id])
+    else
+      @blog = Blog.find(params[:id])
+    end
   end
 
   def blog_params
