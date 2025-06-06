@@ -3,8 +3,8 @@
 class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
 
-  before_action :set_blog, only: %i[show edit update destroy]
-
+  before_action :set_blog_for_show, only: [:show]
+  before_action :set_blog_for_modify, only: %i[edit update destroy]
   def index
     @blogs = Blog.search(params[:term]).published.default_order
   end
@@ -48,13 +48,18 @@ class BlogsController < ApplicationController
 
   private
 
-  def set_blog
-    if action_name == 'show'
-      scope = user_signed_in? ? Blog.where('secret = ? OR user_id = ?', false, current_user.id) : Blog.where(secret: false)
-      @blog = scope.find(params[:id])
-    else
-      @blog = Blog.find(params[:id])
-    end
+  def set_blog_for_show
+    base_scope = Blog.where(secret: false)
+    scope = if user_signed_in?
+              base_scope.or(Blog.where(user_id: current_user.id))
+            else
+              base_scope
+            end
+    @blog = scope.find(params[:id])
+  end
+
+  def set_blog_for_modify
+    @blog = Blog.find(params[:id])
   end
 
   def blog_params
