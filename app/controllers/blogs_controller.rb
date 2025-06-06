@@ -15,10 +15,7 @@ class BlogsController < ApplicationController
     @blog = Blog.new
   end
 
-  def edit
-    @blog = Blog.find(params[:id])
-    raise ActiveRecord::RecordNotFound unless @blog.user == current_user
-  end
+  def edit; end
 
   def create
     @blog = current_user.blogs.new(blog_params)
@@ -31,7 +28,6 @@ class BlogsController < ApplicationController
   end
 
   def update
-    @blog = current_user.blogs.find(params[:id])
     if @blog.update(blog_params)
       redirect_to blog_url(@blog), notice: 'Blog was successfully updated.'
     else
@@ -40,7 +36,6 @@ class BlogsController < ApplicationController
   end
 
   def destroy
-    @blog = current_user.blogs.find(params[:id])
     @blog.destroy!
 
     redirect_to blogs_url, notice: 'Blog was successfully destroyed.', status: :see_other
