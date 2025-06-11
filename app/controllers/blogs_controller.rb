@@ -46,7 +46,7 @@ class BlogsController < ApplicationController
   def set_blog_for_show
     base_scope = Blog.published
     scope = if user_signed_in?
-              base_scope.or(Blog.where(user_id: current_user.id))
+              base_scope.or(Blog.where(user: current_user))
             else
               base_scope
             end
