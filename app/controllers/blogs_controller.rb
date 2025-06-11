@@ -4,6 +4,7 @@ class BlogsController < ApplicationController
   skip_before_action :authenticate_user!, only: %i[index show]
 
   before_action :set_blog_for_modify, only: %i[edit update destroy]
+
   def index
     @blogs = Blog.search(params[:term]).published.default_order
   end
