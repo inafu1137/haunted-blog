@@ -23,4 +23,12 @@ class Blog < ApplicationRecord
   def owned_by?(target_user)
     user == target_user
   end
+
+  def self.accessible_by(user)
+    if user.present?
+      published.or(where(user:))
+    else
+      published
+    end
+  end
 end
