@@ -11,8 +11,7 @@ class Blog < ApplicationRecord
 
   scope :search, lambda { |term|
     if term.present?
-      sanitized_term = sanitize_sql_like(term)
-      term_like_pattern = "%#{sanitized_term}"
+      term_like_pattern = "%#{sanitize_sql_like(term)}"
       where('title LIKE ? OR content LIKE ?', term_like_pattern, term_like_pattern)
     else
       all
