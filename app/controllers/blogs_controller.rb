@@ -44,13 +44,13 @@ class BlogsController < ApplicationController
   private
 
   def set_blog_for_show
-    base_scope = Blog.published
-    scope = if user_signed_in?
-              base_scope.or(Blog.where(user: current_user))
-            else
-              base_scope
-            end
-    @blog = scope.find(params[:id])
+    published_blogs = Blog.published
+    accessible_blogs = if user_signed_in?
+                         published_blogs.or(Blog.where(user: current_user))
+                       else
+                         published_blogs
+                       end
+    @blog = accessible_blogs.find(params[:id])
   end
 
   def set_blog_for_modify
