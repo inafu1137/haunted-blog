@@ -10,7 +10,7 @@ class BlogsController < ApplicationController
   end
 
   def show
-    set_blog_for_show
+    @blog = Blog.accessible_by(current_user).find(params[:id])
   end
 
   def new
@@ -44,16 +44,6 @@ class BlogsController < ApplicationController
   end
 
   private
-
-  def set_blog_for_show
-    published_blogs = Blog.published
-    accessible_blogs = if user_signed_in?
-                         published_blogs.or(Blog.where(user: current_user))
-                       else
-                         published_blogs
-                       end
-    @blog = accessible_blogs.find(params[:id])
-  end
 
   def set_blog_for_modify
     @blog = current_user.blogs.find(params[:id])
