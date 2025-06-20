@@ -21,11 +21,7 @@ class Blog < ApplicationRecord
   scope :default_order, -> { order(id: :desc) }
 
   scope :accessible_by, lambda { |user|
-    if user.present?
-      published.or(where(user:))
-    else
-      published
-    end
+    published.or(where(user:))
   }
 
   def owned_by?(target_user)
